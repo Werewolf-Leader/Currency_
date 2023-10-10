@@ -1,5 +1,3 @@
-markdown
-
 # Currency Exchange Rate Monitor and Email Alert Agent
 
 ## Overview
@@ -52,9 +50,8 @@ The agent will start monitoring the exchange rate at the specified intervals and
 Customization
 
     You can customize the agent's name and endpoint.
-    Modify the currencies and thresholds to suit your requirements.
-    You can further extend the agent to use different external currency exchange rate APIs.
-
+    Modify the currencies and thresholds to suit your requirements
+    
 License
 
 This Currency Exchange Rate Monitor and Email Alert Agent is provided under the MIT License.
