@@ -1,38 +1,60 @@
+from uagents import Agent, Context
+from uagents.setup import fund_agent_if_low
+import requests
 import smtplib
-import time
-from forex_python.converter import CurrencyRates
+from email.mime.text import MIMEText
 
-SMTP_SERVER = 'your_smtp_server.com'
-SMTP_PORT = 587
-YOUR_EMAIL = 'your_email@gmail.com'
-YOUR_EMAIL_PASSWORD = 'your_email_password'
-RECIPIENT_EMAIL = 'recipient_email@example.com'
+# Create the agent
+agent = Agent(name="exchange_rate_agent",
+              endpoint=["http://127.0.0.1:8000/submit"],
+              seed="your_recovery_phrase_here")
 
-BASE_CURRENCY = 'USD'
-TARGET_CURRENCY = 'EUR'
+# Function to fetch the exchange rate
+def get_rate(base, target):
+    response = requests.get(f'https://v6.exchangerate-api.com/v6/86639d518e130c5da8c502d2/latest/{base}')
+    data = response.json()
+    rates = data.get('conversion_rates', {})
+    return rates.get(target)
 
-ALERT_THRESHOLD = 0.9
+# Function to check thresholds and send email alerts
+def check_thresholds():
+    base = "USD"
+    target = "INR"
+    upper = 82.60
+    lower = 82.55
+    rate = get_rate(base, target)
 
-def send_email(subject, message):
+    if rate:
+        if rate > upper:
+            send_notification(f'Alert: {base} to {target} rate is above {upper}')
+        elif rate < lower:
+            send_notification(f'Alert: {base} to {target} rate is below {lower}')
+
+# Function to send email alerts
+def send_notification(message):
+    sender = "your_email@gmail.com"
+    password = "your_password"
+    receiver = "recipient_email@gmail.com"
+
+    msg = MIMEText(message)
+    msg['Subject'] = "Currency Rate Alert"
+    msg['From'] = sender
+    msg['To'] = receiver
+
     try:
-        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+        server = smtplib.SMTP("smtp.gmail.com", 587)
         server.starttls()
-        server.login(YOUR_EMAIL, YOUR_EMAIL_PASSWORD)
-        body = f"Subject: {subject}\n\n{message}"
-        server.sendmail(YOUR_EMAIL, RECIPIENT_EMAIL, body)
+        server.login(sender, password)
+        server.sendmail(sender, receiver, msg.as_string())
         server.quit()
+        print("Email alert sent successfully.")
     except Exception as e:
-        print(f"Error sending email: {str(e)}")
+        print(f"Email alert could not be sent. Error: {str(e)}")
 
-def monitor_exchange_rate():
-    converter = CurrencyRates()
-    while True:
-        rate = converter.get_rate(BASE_CURRENCY, TARGET_CURRENCY)
-        if rate < ALERT_THRESHOLD:
-            subject = f"Currency Alert: {BASE_CURRENCY} to {TARGET_CURRENCY}"
-            message = f"Current exchange rate: 1 {BASE_CURRENCY} = {rate} {TARGET_CURRENCY}"
-            send_email(subject, message)
-        time.sleep(3600)
+@agent.on_interval(period=28800.0)
+async def time_interval(ctx: Context):
+    check_thresholds()
 
-if __name__ == "__main__":
-    monitor_exchange_rate()
+if __name__ == '__main__':
+    fund_agent_if_low(agent)
+    agent.run()
