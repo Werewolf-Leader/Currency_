@@ -1,48 +1,60 @@
-# Currency_
-
 markdown
 
-# Currency Exchange Monitor with Email Alerts
+# Currency Exchange Rate Monitor and Email Alert Agent
 
-This Python script monitors the exchange rate between two currencies and sends email alerts when the rate falls below a specified threshold. It uses the `forex-python` library to fetch exchange rate data and the `smtplib` library to send email notifications.
+## Overview
+
+The Currency Exchange Rate Monitor and Email Alert Agent is a Python script that continuously monitors currency exchange rates for a specified currency pair and sends email alerts when the exchange rate crosses user-defined thresholds. This agent utilizes the uAgents library for its core functionality.
+
+## Features
+
+- Allows users to specify the base currency and target currency to monitor.
+- Fetches real-time exchange rates using an external API.
+- Sends email alerts when the exchange rate crosses predefined upper and lower thresholds.
+- Can be scheduled to run at specified intervals to monitor currency rates.
 
 ## Prerequisites
 
-Before running the script, ensure you have the following prerequisites:
+Before using this agent, ensure you have the following prerequisites:
 
-- Python 3.x installed on your system.
-- The `forex-python` library, which can be installed using `pip`:
+- Python 3.x installed.
+- The uAgents library installed.
+- The requests library installed (for making API requests).
+- Access to an email account (e.g., Gmail) for sending email alerts.
+- Twilio API credentials (if using SMS alerts).
 
-  ```bash
-  ## pip install forex-python
+## Usage
 
-Configuration
+1. Clone this repository or download the Python script.
 
-    Open the currency_exchange_monitor.py file.
+2. Modify the following variables in the script:
 
-    Replace the following placeholders with your own details:
-        SMTP_SERVER: Your SMTP server address (e.g., 'smtp.example.com').
-        SMTP_PORT: The SMTP server port (e.g., 587 for TLS).
-        YOUR_EMAIL: Your email address for sending alerts.
-        YOUR_EMAIL_PASSWORD: Your email password (Consider using an app-specific password for security).
-        RECIPIENT_EMAIL: The recipient's email address for receiving alerts.
-        BASE_CURRENCY: The currency you want to monitor (e.g., 'USD').
-        TARGET_CURRENCY: The currency to which you want to convert (e.g., 'EUR').
-        ALERT_THRESHOLD: The exchange rate threshold for sending alerts (e.g., 0.9 for 1 USD to EUR).
+   - `agent.name`: Set the name of your agent.
+   - `agent.endpoint`: Update the endpoint if needed.
+   - `agent.seed`: Set your recovery phrase for the agent.
 
-Usage
+3. Configure the base currency, target currency, and threshold values in the `check_thresholds` function.
 
-To start the currency exchange monitor, run the following command in your terminal:
+4. Set up your email credentials:
 
-bash
+   - `sender_email`: Your email address.
+   - `sender_password`: Your email password.
+   - `receiver_email`: The recipient's email address.
 
-python currency_exchange_monitor.py
+5. Replace `your_recovery_phrase_here` with your actual recovery phrase.
 
-The script will continuously monitor the exchange rate and send email alerts when the rate falls below the specified threshold. It checks the rate every hour by default.
+6. Run the script:
+
+   ```bash
+   python currency_monitor_agent.py
+
+The agent will start monitoring the exchange rate at the specified intervals and send email alerts when necessary.
+Customization
+
+    You can customize the agent's name and endpoint.
+    Modify the currencies and thresholds to suit your requirements.
+    You can further extend the agent to use different external currency exchange rate APIs.
+
 License
 
-This project is licensed under the MIT License. See the LICENSE file for details.
-Acknowledgments
-
-    The script uses the forex-python library to retrieve exchange rate data. More information can be found here.
-Readme is created using AI
+This Currency Exchange Rate Monitor and Email Alert Agent is provided under the MIT License.
